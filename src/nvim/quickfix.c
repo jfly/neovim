@@ -4167,7 +4167,7 @@ static void qf_fill_buffer(qf_list_T *qfl, buf_T *buf, qfline_T *old_last, int q
 
   if (old_last == NULL) {
     if (buf != curbuf) {
-      internal_error("qf_fill_buffer()");
+      internal_error("qf_fill_buffer(1)");//<<<
       return;
     }
 
@@ -4182,7 +4182,7 @@ static void qf_fill_buffer(qf_list_T *qfl, buf_T *buf, qfline_T *old_last, int q
       // If deletion fails, this loop may run forever, so
       // signal error and return.
       if (ml_delete(1, false) == FAIL) {
-        internal_error("qf_fill_buffer()");
+        internal_error("qf_fill_buffer(2)");//<<<
         return;
       }
     }
