@@ -229,6 +229,15 @@ local function handle_diagnostics(uri, client_id, diagnostics, is_pull)
 
   local namespace = M.get_namespace(client_id, is_pull)
 
+  local client = vim.lsp.get_client_by_id(client_id)
+  if client and client.attached_buffers[bufnr] == nil then
+    -- We just received diagnostics from a LSP client that is no longer
+    -- attached to this buffer.
+    -- This can happen if we're detaching a LSP client while it's outputting diagnostics.
+    -- Just ignore it, it should stop happening once the LSP processes the detach.
+    return
+  end
+
   vim.diagnostic.set(namespace, bufnr, diagnostic_lsp_to_vim(diagnostics, bufnr, client_id))
 end
 
