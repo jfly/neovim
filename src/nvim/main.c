@@ -456,7 +456,7 @@ int main(int argc, char **argv)
     }
   }
 
-  nlua_init_defaults();
+  nlua_init_defaults(); //<<< this (indirectly) loads <runtime/lua/vim/_core/defaults.lua>, which makes an OSC11 request, which asynchronously (?) responds
 
   TIME_MSG("init default mappings & autocommands");
 
@@ -478,7 +478,7 @@ int main(int argc, char **argv)
   }
 
   // Source startup scripts.
-  source_startup_scripts(&params);
+  source_startup_scripts(&params); //<<< this loads the user's VIMINIT, which may set `background`
 
   // If using the runtime (-u is not NONE), enable syntax & filetype plugins.
   if (!vimrc_none || params.clean) {
@@ -2092,7 +2092,7 @@ static bool do_user_initialization(void)
   FUNC_ATTR_WARN_UNUSED_RESULT
 {
   bool do_exrc = p_exrc;
-  if (execute_env("VIMINIT") == OK) {
+  if (execute_env("VIMINIT") == OK) { //<<<
     do_exrc = p_exrc;
     return do_exrc;
   }

@@ -2438,7 +2438,7 @@ void nlua_init_defaults(void)
   assert(L);
 
   lua_getglobal(L, "require");
-  lua_pushstring(L, "vim._core.defaults");
+  lua_pushstring(L, "vim._core.defaults"); //<<<
   if (nlua_pcall(L, 1, 0)) {
     fprintf(stderr, "%s\n", lua_tostring(L, -1));
   }

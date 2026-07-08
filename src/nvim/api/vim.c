@@ -714,6 +714,13 @@ String nvim_get_current_line(Arena *arena, Error *err)
   return buffer_get_line(curbuf->handle, curwin->w_cursor.lnum - 1, arena, err);
 }
 
+
+Integer nvim_get_current_scriptid(void)
+  FUNC_API_SINCE(15)
+{
+  return current_sctx.sc_sid;
+}
+
 /// Sets the text on the current line.
 ///
 /// @param line     Line contents

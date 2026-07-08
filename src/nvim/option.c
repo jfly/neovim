@@ -2052,6 +2052,18 @@ void set_option_sctx(OptIndex opt_idx, int opt_flags, sctx_T script_ctx)
 {
   bool both = (opt_flags & (OPT_LOCAL | OPT_GLOBAL)) == 0;
 
+  //<<<
+  vimoption_T *opt = &options[opt_idx];
+  if(strcmp(opt->fullname, "background") == 0) {
+    char* buff = malloc(1024);
+    snprintf(buff, 1024, "\noption.c:set_option_sctx sid %d set %s\n", script_ctx.sc_sid, opt->fullname);
+    msg_puts_hl(buff, 0, true);
+    free(buff);
+    // <<< msg("HIYA", 0);
+    // <<< swmsg(0, "\noption.c:sid %d set %s to %s\n", set_sid == 0 ? current_sctx.sc_sid : set_sid, opt->fullname, new_value.data.string.data);
+  }
+  //<<<
+
   // Modeline already has the line number set.
   if (!(opt_flags & OPT_MODELINE)) {
     script_ctx.sc_lnum += SOURCING_LNUM;
@@ -3915,6 +3927,17 @@ static const char *did_set_option(OptIndex opt_idx, void *varp, OptVal old_value
 
   // Re-assign the new value as its value may get freed or modified by the option callback.
   new_value = optval_from_varp(opt_idx, varp);
+
+  //<<<
+  if(strcmp(opt->fullname, "background") == 0) {
+    char* buff = malloc(1024);
+    snprintf(buff, 1024, "\noption.c:sid %d set %s to %s\n", set_sid == 0 ? current_sctx.sc_sid : set_sid, opt->fullname, new_value.data.string.data);
+    msg_puts_hl(buff, 0, true);
+    free(buff);
+    // <<< msg("HIYA", 0);
+    // <<< swmsg(0, "\noption.c:sid %d set %s to %s\n", set_sid == 0 ? current_sctx.sc_sid : set_sid, opt->fullname, new_value.data.string.data);
+  }
+  //<<<
 
   if (set_sid != SID_NONE) {
     sctx_T script_ctx = set_sid == 0 ? current_sctx : (sctx_T){ .sc_sid = set_sid };
@@ -6918,6 +6941,7 @@ static Dict vimoption2dict(vimoption_T *opt, int opt_flags, buf_T *buf, win_T *w
   }
 
   PUT_C(dict, "last_set_sid", INTEGER_OBJ(script_ctx.sc_sid));
+
   PUT_C(dict, "last_set_linenr", INTEGER_OBJ(script_ctx.sc_lnum));
   PUT_C(dict, "last_set_chan", INTEGER_OBJ((int64_t)script_ctx.sc_chan));
 

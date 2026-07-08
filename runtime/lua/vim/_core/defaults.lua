@@ -839,6 +839,7 @@ do
   --- True if 'background' was set by the user, not by our detection (sid_lua).
   local function bg_user_set()
     local info = vim.api.nvim_get_option_info2('background', {})
+    print("defaults.lua: " .. vim.inspect(info.was_set) .. " " .. vim.inspect(info.last_set_sid)) --<<<
     return info.was_set and info.last_set_sid ~= sid_lua
   end
 
@@ -945,6 +946,7 @@ do
     -- also reacts to runtime theme changes; the per-response bg_user_set() guard
     -- stops it once the user pins 'background'.
     local did_dsr_response = false
+    print("defaults.lua: Making a OSC11 request. script id: " .. vim.api.nvim_get_current_scriptid()) --<<<
     vim.tty.request(
       osc11 .. (sync and dsr or ''),
       { group = bg_group, timeout = 0, chan = chan },
@@ -960,6 +962,7 @@ do
         end
 
         -- Never override an explicit user value: stop once the user pins it.
+        print("defaults.lua: Handling a OSC11 response. script id: " .. vim.api.nvim_get_current_scriptid()) --<<<
         if bg_user_set() then
           return true
         end
@@ -974,7 +977,9 @@ do
             local luminance = (0.299 * rr) + (0.587 * gg) + (0.114 * bb)
             local bg = luminance < 0.5 and 'dark' or 'light'
             -- Use :noautocmd to suppress OptionSet event; OSC11 response may arrive after VimEnter.
+            print("defaults.lua: detected bg color, setting it to " .. bg) --<<<
             vim.cmd('noautocmd set background=' .. bg)
+            print("defaults.lua: done setting bg color to " .. bg .. " " .. vim.inspect(vim.api.nvim_get_option_info2('background', {}))) --<<<
           end
         end
       end
@@ -1094,6 +1099,7 @@ do
     -- startup TTY (including runtime reactivity), so the UIEnter path below is
     -- not registered for it (avoids double-detection).
     if vim.o.ttyfast then
+      print("defaults.lua: about to call detect_background") --<<<
       detect_background(true, tty.chan)
     end
 
