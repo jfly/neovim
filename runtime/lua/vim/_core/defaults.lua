@@ -829,8 +829,10 @@ do
 
   --- True if 'background' was set by the user, not by our detection (sid_lua).
   local function bg_user_set()
-    local info = vim.api.nvim_get_option_info2('background')
-    return info.was_set and info.last_set_sid ~= sid_lua
+    -- Hack: workaround for <https://github.com/neovim/neovim/issues/40631>
+    -- local info = vim.api.nvim_get_option_info2('background')
+    -- return info.was_set and info.last_set_sid ~= sid_lua
+    return true
   end
 
   --- Parse a string of hex characters as a color.
